@@ -10,13 +10,15 @@ import com.example.voting.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 //import org.springframework.web.bind.annotation.CrossOrigin;
 //import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.PostMapping;
 //import org.springframework.web.bind.annotation.RestController;
 
-
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class CandidateProfileController {
     @Autowired
     private StudentsRepository studentsRepository;
     //@Autowired
-    //private StorageService storageService;
+    private StorageService storageService;
 
     public CandidateProfileController(CandidateProfileRepository candidateProfileRepository) {
         this.candidateProfileRepository = candidateProfileRepository;
@@ -65,33 +67,52 @@ public class CandidateProfileController {
     }
 
     @PostMapping("/canp")
-    public CandidateProfile newCandidateProfile(@RequestBody CandidateProfilePayload canp) {
+    public ResponseEntity<?> newCandidateProfile(@RequestParam("tile_name") String title_name,
+                                                @RequestParam("canp_name") String c_name,
+                                                @RequestParam("birthday") String birthday,
+                                                @RequestParam("telephone") String telephone,
+                                                @RequestParam("student_id") String student_id,
+                                                @RequestParam("year") int year,
+                                                @RequestParam("grade") String grade,
+                                                @RequestParam("archivement") String archivement,
+                                                @RequestParam("c_number") int c_number,
+                                                @RequestParam("purpose") String purpose,
+                                                @RequestParam("major") long major_id,
+                                                @RequestParam("gender") long gender_id,
+                                                @RequestParam("admin") long admin_id,
+                                                @RequestParam("file") MultipartFile file) {
+        try{
+            // Save File to server
+            storageService.store(file);
+            CandidateProfile cp = new CandidateProfile();
+            Optional<Major> major = majorRepository.findById(major_id);
+            Optional<Gender> gender = genderRepository.findById(gender_id);
+            Optional<Admin> admin = adminRepository.findById(admin_id);
 
-        CandidateProfile cp = new CandidateProfile();
+            cp.setTitle_name(title_name);
+            cp.setC_name(c_name);
+            cp.setBirthday(birthday);
+            cp.setTelephone(telephone);
+            cp.setStudentId(student_id);
+            cp.setYear(year);
+            cp.setGrade(grade);
+            cp.setArchivement(archivement);
+            cp.setC_number(c_number);
+            cp.setPurpose(purpose);
+            cp.setAvatar(file.getOriginalFilename()); //b6000.jpg
+            cp.setMajor(major.get());
+            cp.setGender(gender.get());
+            cp.setAdmin(admin.get());    
+            
+            candidateProfileRepository.save(cp);
+        
+            String result = "You successfully uploaded " + file.getOriginalFilename() + "!";
+            return ResponseEntity.ok().body(result);
+        }
+        catch(Exception ex){
 
-
-        Optional<Major> major = majorRepository.findById(canp.getMajor_id());
-        Optional<Gender> gender = genderRepository.findById(canp.getGender_id());
-        Optional<Admin> admin = adminRepository.findById(canp.getAdmin_id());
-        System.out.println(canp.getC_name());
-
-        cp.setTitle_name(canp.getTitle_name());
-        cp.setC_name(canp.getC_name());
-        cp.setBirthday(canp.getBirthday());
-        cp.setTelephone(canp.getTelephone());
-        cp.setStudentId(canp.getStudent_id());
-        cp.setYear(canp.getYear());
-        cp.setGrade(canp.getGrade());
-        cp.setArchivement(canp.getArchivement());
-        cp.setC_number(canp.getC_number());
-        cp.setPurpose(canp.getPurpose());
-
-        cp.setMajor(major.get());
-        cp.setGender(gender.get());
-        cp.setAdmin(admin.get());
-        return candidateProfileRepository.save(cp);
-
-
+            return ResponseEntity.badRequest().body(new MessageResponse("error jaaaa"));
+        }
     }
 
 }

@@ -51,7 +51,7 @@ public class VoteController {
         newVote.setCandidateProfile(candidateProfile.get());
         newVote.setHash(v.getHash());
         //step1 getCanditePro =>
-        candidateProfile.get().setPoints(candidateProfile.get().getPoints()+1);
+       // candidateProfile.get().setPoints(candidateProfile.get().getPoints()+1);
         candidateProfileRepository.save(candidateProfile.get());
 
         return voteRepository.save(newVote);

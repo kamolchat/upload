@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.stream.Stream;
 import com.example.voting.storage.*;
 import com.example.voting.storage.StorageProperties;
-import com.example.voting.storage.FileStorageService;
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
@@ -35,7 +34,7 @@ public class VotingApplication {
 	@Bean
 	ApplicationRunner init(AdminRepository adminRepository, CandidateProfileRepository candidateProfileRepository,
 						   GenderRepository genderRepository, MajorRepository majorRepository, StudentsRepository studentsRepository, 
-						   VoteRepository voteRepository, FileStorageService fileStorageService){
+						   VoteRepository voteRepository){
 		return  args -> {
 
 			//Students
@@ -117,7 +116,8 @@ public class VotingApplication {
 				m22, m23, m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, m35, m36, m37, m38, m39, m40, m41, m42).forEach(m -> {
                 majorRepository.save(m);
 			});	
-
+			
+			/*
 			//CandidateProfile
 			//1
 			CandidateProfile cp1 = new CandidateProfile();
@@ -225,9 +225,9 @@ public class VotingApplication {
 
 			Stream.of(cp1, cp2, cp3, cp4, cp5, cp6).forEach(cp -> {
 			candidateProfileRepository.save(cp);
-
 			
 			});
+			*/
 			
 		};
 	}
@@ -253,4 +253,6 @@ public class VotingApplication {
 		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return bean;
 	}
+
+	
 }

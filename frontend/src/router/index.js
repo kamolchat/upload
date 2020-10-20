@@ -64,11 +64,7 @@ const routes = [
     component: () =>
     import("../views/VoteResult.vue")
   },
-  {
-    path: "/test",
-    name: "test",
-    component: () => import("../views/Test.vue")
-  },
+
   {
     path: "/uploadfile",
     name: "uploadfile",
@@ -82,7 +78,7 @@ const router = new VueRouter({
   routes
 });
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/signin", "/home", "/register", "/admin/signin","/voteResult","/uploadfile","/test"
+  const publicPages = ["/signin", "/home", "/register", "/admin/signin","/voteResult","/uploadfile"
     ];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");

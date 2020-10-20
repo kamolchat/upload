@@ -4,8 +4,8 @@
       <v-flex xs3 sm6 md9 lg12>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="6">
-            <v-alert type="success" dismissible v-model="alertSuccess">บันทึกข้อมูลสำเร็จ</v-alert>
-            <v-alert type="error" dismissible v-model="alertFailed">{{alertmsg}}!</v-alert>
+            <v-alert type="success" dismissible v-model="message">บันทึกข้อมูลสำเร็จ</v-alert>
+           <!-- <v-alert type="error" dismissible v-model="alertFailed">{{alertmsg}}!</v-alert> -->
            
           </v-col>
         </v-row>
@@ -128,28 +128,22 @@
         </v-col>
         </v-row>
 
-        <!--
+        
         <v-row justify="center">
-        <v-col cols="12" sm="6" md="4">
+        <v-col cols="12" sm="6" md="6">
         <v-file-input 
           :rules="rules"
-          accept="image/png, image/jpeg, image/bmp"
-         
+          accept="image/png, image/jpeg"
           label="รูปภาพ"
           placeholder="  "
           prepend-icon="mdi-camera"
           outlined :show-size="6"
 
           @change="onFileSelected"
-          type="file" uploadfile="file"
           
         ></v-file-input>
         </v-col>
-
-        <v-col cols="12" sm="6" md="2">
-         <v-btn large @click="onUpload">UPLOAD</v-btn>
-        </v-col>
-        </v-row>  -->
+        </v-row>
 
           <v-row justify="center">
           <v-col cols="6">
@@ -167,10 +161,9 @@
 
         <v-row justify="center">
           <v-col cols="6" sm="6" class="pa-2 mx-3">
-            <v-btn @click="checksave" color="success">SAVE</v-btn>
+            <v-btn @click="save" color="success">SAVE</v-btn>
             &nbsp;
             <v-btn  class="ma-2" router-link to="/">CANCEL</v-btn>
-         
           </v-col>
          </v-row>
 
@@ -186,44 +179,49 @@ export default {
   mounted() {
     this.getAllAdmin();
     this.getAllGender();
-    this.getAllMajor();
-   
+    this.getAllMajor(); 
+   // this.clearAlert();
   },
   data() {
     return {
     
-        fillTitleName: undefined,
-        fillName: undefined,
-        fillBirthday: undefined,
-        fillTelephone: undefined,
-        fillStudentId: undefined,
-        fillYear: undefined,
-        fillGrade: undefined,
-        fillArchivement: undefined,
-        fillCanNumber: undefined,
-        fillPurpose: undefined,
+        fillTitleName: '',
+        fillName: '',
+        fillBirthday: '',
+        fillTelephone: '',
+        fillStudentId: '',
+        fillYear: '',
+        fillGrade: '',
+        fillArchivement: '',
+        fillCanNumber: '',
+        fillPurpose: '',
+        selectedFile: null,
 
         majors: [],
-        selectMajor: undefined,
+        selectMajor: null,
 
         genders: [],
-        selectGender: undefined,
+        selectGender: null,
         
         admins: [],
-        selectAdmin: undefined,
+        selectAdmin: null,
 
-       
-     
-        alertFailed: false,
-        alertSuccess: false,
-        alertmsg: undefined
+        response: null,
+        message: null
+       //alertFailed: false,
+        //alertSuccess: false,
+        //alertmsg: undefined
     };
   },
   
   methods: {
+    onFileSelected(event) {
+      // ให้ภาพที่เราเลือกจากคอม มาเก็บไว้ในตัวแปร selectedFile
+      this.selectedFile = event.target.files[0];
+    },
     getAllAdmin() {
       api
-        .get("/api/admins/")
+        .get("/api/admins")
         .then(response => {
           this.admins = response.data;
           console.log(JSON.parse(JSON.stringify(response.data)));
@@ -232,10 +230,9 @@ export default {
           console.log(e);
         });
       },
-
     getAllGender() {
         api
-        .get("/gender/")
+        .get("/gender")
         .then(response => {
           this.genders = response.data;
           console.log(JSON.parse(JSON.stringify(response.data)));
@@ -246,7 +243,7 @@ export default {
     },
     getAllMajor() {
         api
-        .get("/major/")
+        .get("/major")
         .then(response => {
           this.majors = response.data;
           console.log(JSON.parse(JSON.stringify(response.data)));
@@ -255,82 +252,57 @@ export default {
           console.log(e);
         });
     },
-       clearAlert() {
-        this.alertmsg = false;
-        this.alertFailed = false;
-        this.alertSuccess = false;
+    /*clearAlert() {
+      this.alertmsg = false;
+      this.alertFailed = false;
+      this.alertSuccess = false;
       
-    },
+    },*/
 
-    checksave() {
-      let data = {
-        title_name: this.fillTitleName,
-        c_name: this.fillName,
-        birthday: this.fillBirthday,
-        telephone: this.fillTelephone,
-        student_id: this.fillStudentId,
-        year: this.fillYear,
-        grade: this.fillGrade,
-        archivement: this.fillArchivement,
-        c_number: this.fillCanNumber,
-        purpose: this.fillPurpose,
+    save() {
+      const fd = new FormData();
+      fd.append('file', this.selectedFile);
+      fd.append('title_name', this.fillTitleName);
+      fd.append('c_name', this.fillName);
+      fd.append('birthday', this.fillBirthday);
+      fd.append('telephone', this.fillTelephone);
+      fd.append('student_id', this.fillStudentId);
+      fd.append('year', this.fillYear);
+      fd.append('grade', this.fillGrade);
+      fd.append('archivement', this.fillArchivement);
+      fd.append('c_number', this.fillCanNumber);
+      fd.append('purpose', this.fillPurpose);
+      fd.append('major_id', this.selectMajor);
+      fd.append('gender_id', this.selectGender);
+      fd.append('admin_id', this.selectAdmin);
 
-       
-        major_id: this.selectMajor,
-        gender_id: this.selectGender,
-        admin_id: this.selectAdmin
-      };
-      console.log(data);
+      console.log(fd);
+      var msg = null;
       api
-        .post("/api/canp", data)
-        .then(() => {
-          this.clearAlert();
-          this.alertSuccess = true;
-
-          this.selectAdmin = null;
-          this.selectMajor = null;
-          this.selectGender = null;
-
-          this.fillTitleName = null;
-          this.fillName = null;
-          this.fillBirthday = null;
-          this.fillTelephone = null;
-          this.fillStudentId = null;
-          this.fillYear = null;
-          this.fillGrade = null;
-          this.fillArchivement = null;
-          this.fillCanNumber = null;
-          this.fillPurpose = null;
-
+        .post('/api/canp', fd)
+        .then((response) => {
+          console.log("din")
+          console.log(response.data);
+          msg = response.data;
         })
-        .catch(e => {
-          console.log(e);
+        .catch(function(error) {
+          console.log(error)
+          if (error.response) {
+            msg = error.response.data.message;
+            console.log(msg)
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+          console.log(error.config);
+        })
+        .finally(() => {
+          console.log('finaly')
+          this.message = msg;
         });
     },
-    save() {
-      
-      if (
-        !this.selectAdmin ||
-        !this.selectMajor ||
-        !this.selectGender ||
-        !this.fillTitleName ||
-        !this.fillName ||
-        !this.fillBirthday ||
-        !this.fillTelephone ||
-        !this.fillStudentId ||
-        !this.fillYear ||
-        !this.fillGrade ||
-        !this.fillCanNumber ||
-        !this.fillPurpose ||
-        !this.fillArchivement
-      ) {
-        this.clearAlert();
-        this.alertmsg = "กรุณากรอกข้อมูลให้ครบ";
-        this.alertFailed = true;
-      } else {
-        this.checksave();
-      }
-    }
+    
   }
 };
 

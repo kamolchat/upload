@@ -3,6 +3,7 @@ package com.example.voting.entity.payload;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class CandidateProfilePayload {
@@ -45,5 +46,8 @@ public class CandidateProfilePayload {
 
     @NotBlank
     private Long major_id;
+
+    @NotBlank
+    private MultipartFile file;
 
 }
