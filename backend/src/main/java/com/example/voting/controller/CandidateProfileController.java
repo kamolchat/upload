@@ -38,8 +38,8 @@ public class CandidateProfileController {
     AdminRepository adminRepository;
     @Autowired
     private StudentsRepository studentsRepository;
-    //@Autowired
-    private StorageService storageService;
+    @Autowired
+    StorageService storageService;
 
     public CandidateProfileController(CandidateProfileRepository candidateProfileRepository) {
         this.candidateProfileRepository = candidateProfileRepository;
@@ -67,7 +67,7 @@ public class CandidateProfileController {
     }
 
     @PostMapping("/canp")
-    public ResponseEntity<?> newCandidateProfile(@RequestParam("tile_name") String title_name,
+    public ResponseEntity<?> newCandidateProfile(@RequestParam("title_name") String title_name,
                                                 @RequestParam("canp_name") String c_name,
                                                 @RequestParam("birthday") String birthday,
                                                 @RequestParam("telephone") String telephone,
@@ -82,13 +82,12 @@ public class CandidateProfileController {
                                                 @RequestParam("admin") long admin_id,
                                                 @RequestParam("file") MultipartFile file) {
         try{
-            // Save File to server
-            storageService.store(file);
+            //1> Try to save data to database.
             CandidateProfile cp = new CandidateProfile();
             Optional<Major> major = majorRepository.findById(major_id);
             Optional<Gender> gender = genderRepository.findById(gender_id);
             Optional<Admin> admin = adminRepository.findById(admin_id);
-
+//            Set field
             cp.setTitle_name(title_name);
             cp.setC_name(c_name);
             cp.setBirthday(birthday);
@@ -102,17 +101,21 @@ public class CandidateProfileController {
             cp.setAvatar(file.getOriginalFilename()); //b6000.jpg
             cp.setMajor(major.get());
             cp.setGender(gender.get());
-            cp.setAdmin(admin.get());    
-            
+            cp.setAdmin(admin.get());
+//            Save
             candidateProfileRepository.save(cp);
-        
+
+//            2> Try to Save File to server.
+            storageService.store(file);
+//            3> Response to client
             String result = "You successfully uploaded " + file.getOriginalFilename() + "!";
             return ResponseEntity.ok().body(result);
         }
-        catch(Exception ex){
-
-            return ResponseEntity.badRequest().body(new MessageResponse("error jaaaa"));
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body("Error when try to save image! -> "+e.getMessage());
         }
+
     }
 
 }
