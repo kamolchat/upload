@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "367c3194-58ae-43a3-ab4e-f990415969b9",
+		"name": "Fin Kamolrat",
+		"description": "Fin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New CandidateProfile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title_name",
+							"value": "Pontep Thaweesup",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "canp_name",
+							"value": "Computer Engineering",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "birthday",
+							"value": "1998-xx-xx",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "telephone",
+							"value": "095xxxxxxx",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "student_id",
+							"value": "B60xxxxx",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "year",
+							"value": "1",
+							"description": "int",
+							"type": "text"
+						},
+						{
+							"key": "grade",
+							"value": "1.98",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "archivement",
+							"value": "No",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "c_number",
+							"value": "1",
+							"description": "int",
+							"type": "text"
+						},
+						{
+							"key": "purpose",
+							"value": "what is this?",
+							"description": "String",
+							"type": "text"
+						},
+						{
+							"key": "major",
+							"value": "1",
+							"description": "long",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "1",
+							"description": "long",
+							"type": "text"
+						},
+						{
+							"key": "admin",
+							"value": "1",
+							"description": "long",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"description": "MultipartFile",
+							"type": "file",
+							"src": "/home/pontep/Downloads/Screenshot from 2020-10-16 00-42-11.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:9000/api/canp",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"canp"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
